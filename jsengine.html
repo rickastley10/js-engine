@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Minimal 2D Engine JS</title>
+<style>
+    body {
+        margin: 0;
+        background: #111;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+        margin: auto;
+        background: black;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="game"></canvas>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const WINDOW_WIDTH = 800;
+const WINDOW_HEIGHT = 600;
+
+/* ============================================================
+   GLOBALS
+   ============================================================ */
+const canvas = document.getElementById("game");
+canvas.width = WINDOW_WIDTH;
+canvas.height = WINDOW_HEIGHT;
+
+const ctx = canvas.getContext("2d");
+
+let running = true;
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+const keys = {};
+
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key] = false;
+});
+
+/* ============================================================
+   RENDERER
+   ============================================================ */
+function clear_screen(color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+}
+
+function draw_rect(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+}
+
+/* ============================================================
+   GAME STATE
+   ============================================================ */
+let rect_x = 100;
+let rect_y = 100;
+const speed = 4;
+
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+function game_loop() {
+
+    if (!running) return;
+
+    /* ===== UPDATE ===== */
+    if (keys["ArrowLeft"])  rect_x -= speed;
+    if (keys["ArrowRight"]) rect_x += speed;
+    if (keys["ArrowUp"])    rect_y -= speed;
+    if (keys["ArrowDown"])  rect_y += speed;
+
+    /* ===== RENDER ===== */
+    clear_screen("#202020");         // dark gray
+    draw_rect(rect_x, rect_y, 200, 150, "#ff0000"); // red rectangle
+
+    requestAnimationFrame(game_loop);
+}
+
+game_loop();
+
+</script>
+</body>
+</html>
