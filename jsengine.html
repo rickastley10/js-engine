@@ -2,18 +2,28 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Minimal 2D Engine JS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>minesweeper</title>
 <style>
     body {
-        margin: 0;
-        background: #111;
-        overflow: hidden;
-    }
+    margin: 0;
+    background: #111;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100vw;
+    height: 100vh;
+}
     canvas {
-        display: block;
-        margin: auto;
-        background: black;
-    }
+    background: black;
+    touch-action: none;
+
+    width: min(100vw, 100vh);
+    height: min(100vw, 100vh);
+}
 </style>
 </head>
 <body>
@@ -24,8 +34,10 @@
 /* ============================================================
    CONFIG
    ============================================================ */
-const WINDOW_WIDTH = 800;
-const WINDOW_HEIGHT = 600;
+const WINDOW_WIDTH = 400;
+const WINDOW_HEIGHT = 440;
+const w = 40;
+const h = 40;
 
 /* ============================================================
    GLOBALS
@@ -37,6 +49,7 @@ canvas.height = WINDOW_HEIGHT;
 const ctx = canvas.getContext("2d");
 
 let running = true;
+let dir = "right";
 
 /* ============================================================
    INPUT
@@ -52,47 +65,64 @@ window.addEventListener("keyup", (e) => {
 });
 
 /* ============================================================
-   RENDERER
+   UNIVERSAL INPUT (Single handler for Mouse + Touch)
    ============================================================ */
-function clear_screen(color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+function handleInput(e) {
+    e.preventDefault();
+    
+    let clientX, clientY;
+    if (e.touches) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY; 
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;  
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;  
+    
+    // Scale coordinates to match canvas size
+    const scaleX = WINDOW_WIDTH / rect.width;
+    const scaleY = WINDOW_HEIGHT / rect.height;
+    const canvasX = x * scaleX;
+    const canvasY = y * scaleY;
+
+
 }
 
-function draw_rect(x, y, w, h, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, w, h);
-}
+canvas.addEventListener("touchstart", handleInput);
+canvas.addEventListener("mousedown", handleInput);
 
 /* ============================================================
    GAME STATE
    ============================================================ */
-let rect_x = 100;
-let rect_y = 100;
-const speed = 4;
 
+x=0
 /* ============================================================
    MAIN LOOP
    ============================================================ */
 function game_loop() {
-
     if (!running) return;
+        
+        ctx.font = "15px Arial";
+        if (keys["p"]){
+            x=x+1
+            console.log(x)
+        }
+        /* ===== RENDER ===== */
+        //clear screen
+        ctx.fillStyle="#000000"
+        ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
 
-    /* ===== UPDATE ===== */
-    if (keys["ArrowLeft"])  rect_x -= speed;
-    if (keys["ArrowRight"]) rect_x += speed;
-    if (keys["ArrowUp"])    rect_y -= speed;
-    if (keys["ArrowDown"])  rect_y += speed;
 
-    /* ===== RENDER ===== */
-    clear_screen("#202020");         // dark gray
-    draw_rect(rect_x, rect_y, 200, 150, "#ff0000"); // red rectangle
-
-    requestAnimationFrame(game_loop);
+    setTimeout(() => {
+        requestAnimationFrame(game_loop);
+    }, 50);
 }
 
 game_loop();
-
 </script>
 </body>
 </html>
