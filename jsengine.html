@@ -99,7 +99,9 @@ canvas.addEventListener("mousedown", handleInput);
    GAME STATE
    ============================================================ */
 
-x=0
+rect_x=200
+rect_y=200
+
 /* ============================================================
    MAIN LOOP
    ============================================================ */
@@ -107,14 +109,28 @@ function game_loop() {
     if (!running) return;
         
         ctx.font = "15px Arial";
-        if (keys["p"]){
-            x=x+1
-            console.log(x)
+        if (keys["w"]){
+            rect_y=rect_y-20;
         }
+        if (keys["s"]){
+            rect_y=rect_y+20;
+        }
+
+        if (keys["d"]){
+            rect_x=rect_x+20;
+        }
+        if (keys["a"]){
+            rect_x=rect_x-20;
+        }
+
+
         /* ===== RENDER ===== */
         //clear screen
         ctx.fillStyle="#000000"
         ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+
+        ctx.fillStyle="#FF0000"
+        ctx.fillRect(rect_x, rect_y, w, h)
 
 
     setTimeout(() => {
